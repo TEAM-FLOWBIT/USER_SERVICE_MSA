@@ -35,6 +35,10 @@ jobs: # job - 하나의 인스턴스에서 여러 Step을 그룹시켜 실행하
         key: ${{ runner.os }}-maven-${{ hashFiles('**/*.xml') }}
         restore-keys: |
             ${{ runner.os }}-maven-
+            
+    - name: ✨ maven 권한 설정
+      run: chmod +x ./mvnw
+      working-directory: ${{ env.working-directory }}
   
     - name: ✨ 테스트 진행
       run: mvn test
