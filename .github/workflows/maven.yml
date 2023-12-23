@@ -10,6 +10,9 @@ jobs: # job - 하나의 인스턴스에서 여러 Step을 그룹시켜 실행하
   build:
     runs-on: ubuntu-latest
 
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
     steps: # 순차적으로 명령어 수행
       - name: Checkout
         uses: actions/checkout@v2
@@ -20,6 +23,11 @@ jobs: # job - 하나의 인스턴스에서 여러 Step을 그룹시켜 실행하
           java-version: '11'
           distribution: 'adopt'
 
+
+      - name: Set AWS credentials
+        run: |
+          echo "AWS_ACCESS_KEY=${{ env.AWS_ACCESS_KEY_ID }}" >> $GITHUB_ENV
+          echo "AWS_SECRET_KEY=${{ env.AWS_SECRET_ACCESS_KEY }}" >> $GITHUB_ENV
       - name: Build with Maven
         run: mvn -B package --file ./pom.xml
 
