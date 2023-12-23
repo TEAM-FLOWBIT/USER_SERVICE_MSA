@@ -24,7 +24,6 @@ import java.util.Date;
 @Slf4j
 public class AwsS3Service {
     private AmazonS3 s3Client;
-//    public static final String CLOUD_FRONT_DOMAIN_NAME ="d2endhb8pwljj4.cloudfront.net";
 
     @Value("${cloud.aws.credentials.accessKey}")
     private String accessKey;
