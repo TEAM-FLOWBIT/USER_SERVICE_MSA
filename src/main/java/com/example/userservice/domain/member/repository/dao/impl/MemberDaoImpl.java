@@ -37,10 +37,5 @@ public class MemberDaoImpl implements MemberDao {
         memberRepository.deleteById(memberId);
     }
 
-    @Override
-    public List<Member> findAllMember() {
-        List<Member> memberList = memberRepository.findAll();
-        return memberList;
-    }
 
 }

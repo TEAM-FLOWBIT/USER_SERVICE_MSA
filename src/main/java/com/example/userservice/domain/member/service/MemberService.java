@@ -14,4 +14,7 @@ public interface MemberService {
 
     CommonResDto<CreateMemberResponseDto> createMember(MultipartFile multipartFile,SignUpRequestDto signUpRequestDto) throws IOException, FileUploadException;
 
+    Member findMemberByUserId(String userId);
+
+    String renewAccessToken(String refreshToken, Authentication authentication);
 }

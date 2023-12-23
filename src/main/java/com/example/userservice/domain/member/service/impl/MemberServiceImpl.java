@@ -37,6 +37,8 @@ public class MemberServiceImpl implements MemberService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final EmailRedisUtil emailRedisUtil;
     private final AwsS3Service awsS3Service;
+    private final JwtProvider jwtProvider;
+    private final RefreshTokenRepository refreshTokenRepository;
 
 
 
@@ -61,6 +63,29 @@ public class MemberServiceImpl implements MemberService {
                 .nickname(savedMember.getNickname())
                 .build());
     }
+
+    @Override
+    @Transactional
+    public String renewAccessToken(String refreshToken,Authentication authentication) {
+        log.info("refreshToken = " + refreshToken);
+        if (!jwtProvider.verifyToken(refreshToken)) {
+            throw new InvalidTokenException();
+        }
+        String username = jwtProvider.getUsernameFromToken(refreshToken);
+        RefreshToken refreshTokenFound = refreshTokenRepository.findById(username).orElseThrow(NotFoundAccountException::new);
+        if (!refreshTokenFound.getToken().equals(refreshToken)) {
+            throw new RuntimeException("not matching refreshToken");
+        }
+
+        return jwtProvider.generateAccessToken(username,authentication);
+    }
+
+
+
+    public Member findMemberByUserId(String userId) {
+        return memberDao.findMemberByUserId(userId);
+    }
+
 
     private void ProfileUploadForcreateMember(MultipartFile multipartFile, SignUpRequestDto signUpRequestDto) throws FileUploadException {
         try {
@@ -110,6 +135,7 @@ public class MemberServiceImpl implements MemberService {
     private void signupVaidate(SignUpRequestDto signUpRequestDto){
 
         String userId = signUpRequestDto.getUserId();
+        System.out.println("회원 유효성검증");
         if (memberDao.duplicateMemberCheck(userId).isPresent()) {
             throw new DuplicateAccountException("아이디 중복");
         }
