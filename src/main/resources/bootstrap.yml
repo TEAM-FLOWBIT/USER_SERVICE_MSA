@@ -5,3 +5,18 @@ spring:
       name: user-service
   profiles:
     active: dev
+## 배포
+#spring:
+#  cloud:
+#    config:
+#      uri: https://config.apps.sys.paas-ta-dev10.kr
+#      name: user-service # yml 파일명 써주면 된다.
+#  profiles:
+#    active: prod
+#  thymeleaf:
+#    prefix: classpath:/templates/
+#    suffix: .html
+#    mode: HTML
+#    encoding: UTF-8
+#    check-template: true
+#    cache: false
