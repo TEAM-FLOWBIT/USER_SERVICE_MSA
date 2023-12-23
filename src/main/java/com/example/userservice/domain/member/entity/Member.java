@@ -25,7 +25,7 @@ public class Member extends BaseTimeEntity {
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         @Column(name = "MEMBER_ID")
         private Long id;
-        @Column(nullable = false, length = 50)
+        @Column(nullable = false, length = 50 ,unique = true)
         private String name;
         @Column(nullable = false, unique = true)
         private String userId;
@@ -37,6 +37,7 @@ public class Member extends BaseTimeEntity {
         @Column(nullable = false)
         private String nickname;
         private Boolean state;
+        @Column(nullable = false)
         private String profile;
         @Builder
         public Member(Long id, String name, String userId, String password, String phone, String nickname,boolean state,String profile) {
