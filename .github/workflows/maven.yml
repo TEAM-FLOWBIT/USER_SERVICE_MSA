@@ -42,15 +42,11 @@ jobs: # job - 하나의 인스턴스에서 여러 Step을 그룹시켜 실행하
         run: echo "Current Time=${{steps.current-time.outputs.formattedTime}}" # current-time 에서 지정한 포맷대로 현재 시간 출력
         shell: bash
 
-      - name: Grant execute permission for gradlew
-        working-directory: ./
-        run: chmod +x mvn
-
       - name: Build with Maven and Run Tests
         run: ./mvn clean test
 
       - name: Test with Maven
-        run: mvn verify jacoco:report
+        run: ./mvn verify jacoco:report
         
       - name: Codecov
         uses: codecov/codecov-action@v3.1.0
