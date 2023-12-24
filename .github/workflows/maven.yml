@@ -49,15 +49,18 @@ jobs: # job - 하나의 인스턴스에서 여러 Step을 그룹시켜 실행하
       - name: Build with Maven and Run Tests
         run: ./mvn clean test
 
+      - name: Test with Maven
+        run: mvn verify jacoco:report
+        
       - name: Codecov
         uses: codecov/codecov-action@v3.1.0
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          file: ./target/reports/jacoco/test/jacocoTestReport.xml
+          file: ./target/site/jacoco/jacoco.xml
           
       - name: Publish Unit Test Results
         uses: EnricoMi/publish-unit-test-result-action@v1
         if: ${{ always() }}
         with:
-          files: ./target/test-results/**/*.xml
+          files: ./target/site/jacoco/jacoco.xml
 
