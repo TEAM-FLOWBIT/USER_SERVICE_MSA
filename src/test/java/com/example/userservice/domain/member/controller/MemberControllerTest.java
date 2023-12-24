@@ -124,13 +124,6 @@ class MemberControllerTest extends ControllerTestSupport {
 
         memberService.createMember(null,signUpRequestDto);
 
-        List<Member> all = memberRepository.findAll();
-        for (Member member : all) {
-            System.out.println(member.getUserId());
-            System.out.println(member.getPassword());
-        }
-
-
         MemberLoginRequestDto memberLoginRequestDto = MemberLoginRequestDto.builder()
                 .userId("kbsserver@naver.com")
                 .password("anstn1234@")
