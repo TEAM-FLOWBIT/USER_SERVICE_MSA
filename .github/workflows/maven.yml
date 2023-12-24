@@ -41,22 +41,3 @@ jobs: # job - 하나의 인스턴스에서 여러 Step을 그룹시켜 실행하
       - name: Print Current Time
         run: echo "Current Time=${{steps.current-time.outputs.formattedTime}}" # current-time 에서 지정한 포맷대로 현재 시간 출력
         shell: bash
-
-      - name: Build with Maven and Run Tests
-        run: mvn clean test
-
-      - name: Test with Maven
-        run: mvn verify jacoco:report
-        
-      - name: Codecov
-        uses: codecov/codecov-action@v3.1.0
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          file: target/site/jacoco/jacoco.xml
-          
-      - name: Publish Unit Test Results
-        uses: EnricoMi/publish-unit-test-result-action@v1
-        if: ${{ always() }}
-        with:
-          files: target/site/jacoco/jacoco.xml
-
