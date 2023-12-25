@@ -5,4 +5,7 @@ public interface VisitorService {
     void increaseHomeViewCount(String ipAddress);
 
     Long readHomeViewCount();
+
+    Long readHomeTotalViewCount();
+
 }

@@ -35,11 +35,19 @@ public class VisitorController {
     }
 
     @GetMapping(value = "")
-    public ResponseEntity<?> visitorCheck() {
+    public ResponseEntity<?> toDayVisitorCheck() {
         log.info("방문자 수 get");
         Long viewCount = visitorService.readHomeViewCount();
         return new ResponseEntity<>(
-                new CommonResDto<>(1,"방문자 확인하기",viewCount), HttpStatus.OK
+                new CommonResDto<>(1,"일일 방문자 확인하기",viewCount), HttpStatus.OK
+        );
+    }
+    @GetMapping(value = "/total-view")
+    public ResponseEntity<?> totalVisitorCheck() {
+        log.info("방문자 수 get");
+        Long viewCount = visitorService.readHomeTotalViewCount();
+        return new ResponseEntity<>(
+                new CommonResDto<>(1,"총 방문자 확인하기",viewCount), HttpStatus.OK
         );
     }
 

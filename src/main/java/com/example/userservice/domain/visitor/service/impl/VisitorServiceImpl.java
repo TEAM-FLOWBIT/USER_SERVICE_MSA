@@ -29,11 +29,12 @@ public class VisitorServiceImpl implements VisitorService {
     @Transactional
     public void increaseHomeViewCount(String ipAddress) {
 //        if(!viewCountUtil.isDuplicatedAccess(ipAddress, "Home")) { // 중복된 값이 있는지 확인
+        viewCountUtil.increaseData("ViewCount_Home_Total"); // 해당 키에 data값 1씩 증가
         viewCountUtil.increaseData("viewCount_Home_1"+YEAR+MONTH+DAY); // 해당 키에 data값 1씩 증가
 //        viewCountUtil.setDuplicateAccess(ipAddress, "Home"); //1일 동안 해당 아이피 유지
-        Long viewCount = viewCountUtil.getViewCount("viewCount_Home_1"+YEAR+MONTH+DAY);
+        Long totalViewCount = viewCountUtil.getViewCount("ViewCount_Home_Total");
         Visitor visitor = Visitor.builder()
-                .count(viewCount)
+                .count(totalViewCount)
                 .build();
         visitorRepository.save(visitor);
 //        }
@@ -42,6 +43,12 @@ public class VisitorServiceImpl implements VisitorService {
     @Override
     public Long readHomeViewCount() {
         Long viewCount = viewCountUtil.getViewCount("viewCount_Home_1"+YEAR+MONTH+DAY);
+        return viewCount;
+    }
+
+    @Override
+    public Long readHomeTotalViewCount() {
+        Long viewCount = viewCountUtil.getViewCount("ViewCount_Home_Total");
         return viewCount;
     }
 }
