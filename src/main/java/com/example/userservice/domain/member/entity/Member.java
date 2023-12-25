@@ -18,7 +18,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "MEMBER")
-@SQLDelete(sql = "UPDATE member SET deleted_at = NOW(),user_id = CONCAT(user_id, NOW()),state=False WHERE member_id = ?")
+@SQLDelete(sql = "UPDATE member SET deleted_at = NOW(),user_id = CONCAT(user_id, NOW()),state=False WHERE member_id = ?") // delete 된 유저를 몇일동안 보관할 것인지 에 대해 의논이 필요함
 @Where(clause = "deleted_at IS NULL")
 public class Member extends BaseTimeEntity {
         @Id
