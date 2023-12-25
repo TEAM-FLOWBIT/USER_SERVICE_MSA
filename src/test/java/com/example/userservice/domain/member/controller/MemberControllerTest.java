@@ -45,14 +45,8 @@ class MemberControllerTest extends ControllerTestSupport {
 
         String url = "/api/v1/member";
 
-        SignUpRequestDto signUpRequestDto = SignUpRequestDto.builder()
-                .phone("010-1234-1234")
-                .name("김민우1234")
-                .password("anstn1234@")
-                .userId("kbsserver@naver.com")
-                .nickname("민우닉네임")
-                .profile("flowbit-default-profile.png")
-                .build();
+        SignUpRequestDto signUpRequestDto = MemberFixture.signUpRequestDto;
+
 
         emailRedisUtil.setListData(signUpRequestDto.getUserId(),0,"signupVerifySuccess",60*20L);
 
@@ -82,14 +76,8 @@ class MemberControllerTest extends ControllerTestSupport {
                 .state(true)
                 .build();
 
-        SignUpRequestDto signUpRequestDto = SignUpRequestDto.builder()
-                .phone("010-1234-1234")
-                .name("김민우1234")
-                .password("anstn1234@")
-                .userId("kbsserver@naver.com")
-                .nickname("민우닉네임")
-                .profile("flowbit-default-profile.png")
-                .build();
+        SignUpRequestDto signUpRequestDto = MemberFixture.signUpRequestDto;
+
 
         String url = "/api/v1/member";
 
@@ -108,48 +96,6 @@ class MemberControllerTest extends ControllerTestSupport {
 
     }
 
-    @DisplayName("회원가입한 사용자는 로그인을 할 수 있다.")
-    @Test
-    void loginMember() throws Exception {
-        //given
-        String url = "/api/v1/member/login";
-
-        SignUpRequestDto signUpRequestDto = SignUpRequestDto.builder()
-                .phone("010-1234-1234")
-                .name("김민우1234")
-                .password("anstn1234@")
-                .userId("kbsserver@naver.com")
-                .nickname("민우닉네임")
-                .profile("flowbit-default-profile.png")
-                .build();
-
-        emailRedisUtil.setListData(signUpRequestDto.getUserId(),0,"signupVerifySuccess",60*20L);
-
-        memberService.createMember(null,signUpRequestDto);
-
-        MemberLoginRequestDto memberLoginRequestDto = MemberLoginRequestDto.builder()
-                .userId("kbsserver@naver.com")
-                .password("anstn1234@")
-                .build();
-
-        //when
-        MvcResult mvcResult = mockMvc.perform(post(url)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .content(objectMapper.writeValueAsString(memberLoginRequestDto))
-                )
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andReturn();
-
-        //then
-        String result = mvcResult.getResponse().getContentAsString();
-        MemberLoginResponseDto memberLoginResponseDto = objectMapper.readValue(result, MemberLoginResponseDto.class);
-        assertThat(memberLoginResponseDto).isNotNull();
-        assertThat(memberLoginResponseDto.getAccessToken()).isNotNull();
-    }
-
-
     @DisplayName("유저는 회원탈퇴를 할 수 있다.")
     @Test
     @WithMockUser(username = "kbsserver@naver.com")
@@ -158,14 +104,8 @@ class MemberControllerTest extends ControllerTestSupport {
 
         String url = "/api/v1/member";
 
-        SignUpRequestDto signUpRequestDto = SignUpRequestDto.builder()
-                .phone("010-1234-1234")
-                .name("김민우1234")
-                .password("anstn1234@")
-                .userId("kbsserver@naver.com")
-                .nickname("민우닉네임")
-                .profile("flowbit-default-profile.png")
-                .build();
+        SignUpRequestDto signUpRequestDto = MemberFixture.signUpRequestDto;
+
 
         emailRedisUtil.setListData(signUpRequestDto.getUserId(),0,"signupVerifySuccess",60*20L);
 
@@ -187,6 +127,52 @@ class MemberControllerTest extends ControllerTestSupport {
                 .andReturn();
 
     }
+
+
+    @DisplayName("회원가입한 사용자는 로그인을 할 수 있다.")
+    @Test
+    void loginMember() throws Exception {
+        //given
+        String url = "/api/v1/member/login";
+
+
+        SignUpRequestDto signUpRequestDto = SignUpRequestDto.builder()
+                .phone("010-1234-1234")
+                .name("김민우1234")
+                .password("anstn1234@")
+                .userId("kbsserver2@naver.com")
+                .nickname("민우닉네임")
+                .profile("flowbit-default-profile.png")
+                .build();
+
+        emailRedisUtil.setListData(signUpRequestDto.getUserId(),0,"signupVerifySuccess",60*20L);
+
+        memberService.createMember(null,signUpRequestDto);
+
+        MemberLoginRequestDto memberLoginRequestDto = MemberLoginRequestDto.builder()
+                .userId("kbsserver2@naver.com")
+                .password("anstn1234@")
+                .build();
+
+        //when
+        MvcResult mvcResult = mockMvc.perform(post(url)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .content(objectMapper.writeValueAsString(memberLoginRequestDto))
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+
+        //then
+        String result = mvcResult.getResponse().getContentAsString();
+        MemberLoginResponseDto memberLoginResponseDto = objectMapper.readValue(result, MemberLoginResponseDto.class);
+        assertThat(memberLoginResponseDto).isNotNull();
+        assertThat(memberLoginResponseDto.getAccessToken()).isNotNull();
+    }
+
+
+
 
 
 

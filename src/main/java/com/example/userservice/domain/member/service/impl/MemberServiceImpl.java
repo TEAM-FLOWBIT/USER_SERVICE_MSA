@@ -84,6 +84,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     @Transactional
     public void deleteMember(DeleteMemberRequestDto deleteMemberRequestDto, String userId) {
+        System.out.println(userId);
         Member member = memberDao.findMemberByUserId(userId);
         if(new BCryptPasswordEncoder().matches(deleteMemberRequestDto.getPassword(),member.getPassword())){
             memberDao.deleteById(member.getId());
