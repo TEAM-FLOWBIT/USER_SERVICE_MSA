@@ -1,5 +1,6 @@
 package com.example.userservice.domain.member.service;
 
+import com.example.userservice.domain.member.dto.request.DeleteMemberRequestDto;
 import com.example.userservice.domain.member.dto.request.SignUpRequestDto;
 import com.example.userservice.domain.member.dto.response.CreateMemberResponseDto;
 import com.example.userservice.domain.member.entity.Member;
@@ -17,4 +18,7 @@ public interface MemberService {
     Member findMemberByUserId(String userId);
 
     String renewAccessToken(String refreshToken, Authentication authentication);
+
+    void deleteMember(DeleteMemberRequestDto deleteMemberRequestDto, String name);
+
 }

@@ -197,7 +197,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NotFoundAccountException.class)
     protected ResponseEntity<CommonResponse> handleNotFoundAccountException(NotFoundAccountException ex) {
 
-        log.info("들어오나요");
+        log.info("계정을 찾지 못했습니다.");
         ErrorCode errorCode = ErrorCode.NOT_FOUND_ACCOUNT_EXCEPTION;
         ErrorResponse error = ErrorResponse.builder()
                 .status(errorCode.getStatus().value())

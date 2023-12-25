@@ -3,6 +3,7 @@ package com.example.userservice.domain.member.service.impl;
 import com.example.userservice.domain.auth.entity.RefreshToken;
 import com.example.userservice.domain.auth.jwt.JwtProvider;
 import com.example.userservice.domain.auth.repository.RefreshTokenRepository;
+import com.example.userservice.domain.member.dto.request.DeleteMemberRequestDto;
 import com.example.userservice.domain.member.dto.request.SignUpRequestDto;
 import com.example.userservice.domain.member.dto.response.CreateMemberResponseDto;
 import com.example.userservice.domain.member.entity.Member;
@@ -78,6 +79,17 @@ public class MemberServiceImpl implements MemberService {
         }
 
         return jwtProvider.generateAccessToken(username,authentication);
+    }
+
+    @Override
+    @Transactional
+    public void deleteMember(DeleteMemberRequestDto deleteMemberRequestDto, String userId) {
+        Member member = memberDao.findMemberByUserId(userId);
+        if(new BCryptPasswordEncoder().matches(deleteMemberRequestDto.getPassword(),member.getPassword())){
+            memberDao.deleteById(member.getId());
+        }else{
+            throw new PasswordNotMatchException();
+        }
     }
 
 
