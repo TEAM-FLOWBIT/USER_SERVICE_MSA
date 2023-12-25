@@ -9,6 +9,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.client.RestTemplate;
 
+import javax.annotation.PostConstruct;
+import java.util.TimeZone;
+
 @SpringBootApplication
 @EnableEurekaClient
 @EnableFeignClients
@@ -26,5 +29,11 @@ public class UserServiceApplication {
     @LoadBalanced
     public RestTemplate getRestTemplate(){
         return new RestTemplate();
+    }
+
+
+    @PostConstruct
+    public void started() {
+        TimeZone.setDefault(TimeZone.getTimeZone("Asia/Seoul"));
     }
 }
