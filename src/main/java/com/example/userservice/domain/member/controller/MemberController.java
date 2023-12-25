@@ -4,6 +4,7 @@ package com.example.userservice.domain.member.controller;
 import com.example.userservice.domain.auth.cookie.CookieUtil;
 import com.example.userservice.domain.auth.jwt.JwtProvider;
 import com.example.userservice.domain.auth.service.RefreshTokenService;
+import com.example.userservice.domain.member.dto.request.DeleteMemberRequestDto;
 import com.example.userservice.domain.member.dto.request.SignUpRequestDto;
 import com.example.userservice.domain.member.dto.response.CreateMemberResponseDto;
 import com.example.userservice.domain.member.dto.response.MemberRenewAccessTokenResponseDto;
@@ -24,6 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
+import java.security.Principal;
 
 
 @RestController
@@ -90,6 +92,14 @@ public class MemberController {
         } catch (InvalidTokenException invalidTokenException) {
             throw new InvalidTokenException("토큰이 유효하지 않습니다");
         }
+    }
+
+    @DeleteMapping("")
+    public ResponseEntity<?> deleteMember(@RequestBody DeleteMemberRequestDto deleteMemberRequestDto, Principal principal) {
+
+        log.info("회원삭제 진행 중");
+        memberService.deleteMember(deleteMemberRequestDto,principal.getName());
+        return new ResponseEntity<>(new CommonResDto<>(1,"회원삭제완료",null), HttpStatus.OK);
     }
 
 
