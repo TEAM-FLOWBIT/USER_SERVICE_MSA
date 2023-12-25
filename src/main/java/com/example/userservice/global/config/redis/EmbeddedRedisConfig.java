@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.util.StringUtils;
 import redis.embedded.RedisServer;
 
@@ -22,6 +23,15 @@ public class EmbeddedRedisConfig {
     private int redisPort;
 
     private RedisServer redisServer;
+
+    private final StringRedisTemplate redisTemplate;
+
+    public EmbeddedRedisConfig(StringRedisTemplate redisTemplate) {
+        this.redisTemplate = redisTemplate;
+    }
+
+
+
 
     @PostConstruct
     public void startRedis() throws IOException {
