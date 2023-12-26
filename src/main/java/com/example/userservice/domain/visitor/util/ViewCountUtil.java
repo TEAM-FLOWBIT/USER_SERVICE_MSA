@@ -24,7 +24,11 @@ public class ViewCountUtil {
     }
 
     public Long getViewCount(String key) {
-        return Long.parseLong((String) visitorRedisUtil.getData(key));
+        if(visitorRedisUtil.getData(key)==null){
+            return 0L;
+        }else{
+            return Long.parseLong((String) visitorRedisUtil.getData(key));
+        }
     }
 
     public Set<String> getKeySet(String domain) {
