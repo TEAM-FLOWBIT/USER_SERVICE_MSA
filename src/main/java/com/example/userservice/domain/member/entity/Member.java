@@ -1,5 +1,6 @@
 package com.example.userservice.domain.member.entity;
 
+import com.example.userservice.domain.member.dto.request.UpdateMemberRequestDto;
 import com.example.userservice.global.entity.BaseTimeEntity;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AccessLevel;
@@ -49,6 +50,12 @@ public class Member extends BaseTimeEntity {
                 this.nickname = nickname;
                 this.state=state;
                 this.profile=profile;
+        }
+
+        public void updateMember(UpdateMemberRequestDto updateMemberRequesstDto, String profileName) {
+                this.name=updateMemberRequesstDto.getName();
+                this.profile=profileName;
+                this.phone=updateMemberRequesstDto.getPhoneNumber();
         }
 
 }
