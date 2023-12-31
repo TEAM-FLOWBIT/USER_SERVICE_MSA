@@ -15,7 +15,9 @@ public enum ErrorCode {
     REQUEST_PARAMETER_BIND_EXCEPTION(HttpStatus.BAD_REQUEST, "REQ_001", "PARAMETER_BIND_FAILED"),
     UnAuthorizedException(HttpStatus.UNAUTHORIZED,"REQ_002","잘못된 접근입니다"),
     EMAIL_VALID_EXCEPTION(HttpStatus.BAD_REQUEST,"REQ_003","이메일 인증번호가 유효하지않습니다"),
-    BOARD_NOT_FOUND_EXCEPTION(HttpStatus.NOT_FOUND, "REQ_004","등록된 글이 없습니다");
+    BOARD_NOT_FOUND_EXCEPTION(HttpStatus.NOT_FOUND, "REQ_004","등록된 글이 없습니다"),
+    BOARDCOMMNET_NOT_FOUND_EXCEPTION(HttpStatus.NOT_FOUND, "REQ_005","등록된 댓글이 없습니다");
+
 
 
     private final String code;

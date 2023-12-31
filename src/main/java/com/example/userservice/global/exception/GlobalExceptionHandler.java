@@ -44,11 +44,32 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     *
+     * 게시글을 찾지 못했을 때
      */
     @ExceptionHandler(BoardNotFoundException.class)
     protected ResponseEntity<?> handleBoardNotFoundException(BoardNotFoundException ex) {
         ErrorCode errorCode = ErrorCode.BOARD_NOT_FOUND_EXCEPTION;
+
+        ErrorResponse error = ErrorResponse.builder()
+                .status(errorCode.getStatus().value())
+                .message(errorCode.getMessage())
+                .code(errorCode.getCode())
+                .build();
+
+        CommonResponse response = CommonResponse.builder()
+                .success(false)
+                .error(error)
+                .build();
+
+        return new ResponseEntity<>(response, errorCode.getStatus());
+    }
+
+    /**
+     * 게시글 댓글을 찾지 못했을 때
+     */
+    @ExceptionHandler(BoardCommentNotFoundException.class)
+    protected ResponseEntity<?> handleBoardCommentNotFoundException(BoardCommentNotFoundException ex) {
+        ErrorCode errorCode = ErrorCode.BOARDCOMMNET_NOT_FOUND_EXCEPTION;
 
         ErrorResponse error = ErrorResponse.builder()
                 .status(errorCode.getStatus().value())
