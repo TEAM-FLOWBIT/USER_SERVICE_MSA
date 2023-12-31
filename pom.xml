@@ -152,6 +152,13 @@
             <artifactId>querydsl-jpa</artifactId>
             <version>${querydsl.version}</version>
         </dependency>
+        <!-- json path 를 통해 파싱 더 쉽게-->
+        <dependency>
+            <groupId>com.jayway.jsonpath</groupId>
+            <artifactId>json-path</artifactId>
+            <version>2.6.0</version>
+        </dependency>
+
 
         <dependency>
             <groupId>mysql</groupId>

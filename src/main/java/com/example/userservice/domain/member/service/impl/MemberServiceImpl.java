@@ -5,7 +5,10 @@ import com.example.userservice.domain.auth.jwt.JwtProvider;
 import com.example.userservice.domain.auth.repository.RefreshTokenRepository;
 import com.example.userservice.domain.member.dto.request.DeleteMemberRequestDto;
 import com.example.userservice.domain.member.dto.request.SignUpRequestDto;
+import com.example.userservice.domain.member.dto.request.UpdateMemberRequestDto;
 import com.example.userservice.domain.member.dto.response.CreateMemberResponseDto;
+import com.example.userservice.domain.member.dto.response.MemberInfoResponseDto;
+import com.example.userservice.domain.member.dto.response.UpdateMemberResponseDto;
 import com.example.userservice.domain.member.entity.Member;
 import com.example.userservice.domain.member.repository.MemberRepository;
 import com.example.userservice.domain.member.repository.dao.MemberDao;
@@ -37,11 +40,26 @@ public class MemberServiceImpl implements MemberService {
     private final MemberDao memberDao;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final EmailRedisUtil emailRedisUtil;
-    private final AwsS3Service awsS3Service;
-    private final JwtProvider jwtProvider;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final JwtProvider jwtProvider;
+    private final AwsS3Service awsS3Service;
 
 
+    @Override
+    @Transactional
+    public String renewAccessToken(String refreshToken,Authentication authentication) {
+        log.info("refreshToken = " + refreshToken);
+        if (!jwtProvider.verifyToken(refreshToken)) {
+            throw new InvalidTokenException();
+        }
+        String username = jwtProvider.getUsernameFromToken(refreshToken);
+        RefreshToken refreshTokenFound = refreshTokenRepository.findById(username).orElseThrow(NotFoundAccountException::new);
+        if (!refreshTokenFound.getToken().equals(refreshToken)) {
+            throw new RuntimeException("not matching refreshToken");
+        }
+
+        return jwtProvider.generateAccessToken(username,authentication);
+    }
 
 
 
@@ -65,42 +83,7 @@ public class MemberServiceImpl implements MemberService {
                 .build());
     }
 
-    @Override
-    @Transactional
-    public String renewAccessToken(String refreshToken,Authentication authentication) {
-        log.info("refreshToken = " + refreshToken);
-        if (!jwtProvider.verifyToken(refreshToken)) {
-            throw new InvalidTokenException();
-        }
-        String username = jwtProvider.getUsernameFromToken(refreshToken);
-        RefreshToken refreshTokenFound = refreshTokenRepository.findById(username).orElseThrow(NotFoundAccountException::new);
-        if (!refreshTokenFound.getToken().equals(refreshToken)) {
-            throw new RuntimeException("not matching refreshToken");
-        }
-
-        return jwtProvider.generateAccessToken(username,authentication);
-    }
-
-    @Override
-    @Transactional
-    public void deleteMember(DeleteMemberRequestDto deleteMemberRequestDto, String userId) {
-        System.out.println(userId);
-        Member member = memberDao.findMemberByUserId(userId);
-        if(new BCryptPasswordEncoder().matches(deleteMemberRequestDto.getPassword(),member.getPassword())){
-            memberDao.deleteById(member.getId());
-        }else{
-            throw new PasswordNotMatchException();
-        }
-    }
-
-
-
-    public Member findMemberByUserId(String userId) {
-        return memberDao.findMemberByUserId(userId);
-    }
-
-
-    private void ProfileUploadForcreateMember(MultipartFile multipartFile, SignUpRequestDto signUpRequestDto) throws FileUploadException {
+    public void ProfileUploadForcreateMember(MultipartFile multipartFile, SignUpRequestDto signUpRequestDto) throws FileUploadException {
         try {
             if (multipartFile !=null) {
                 log.info("파일업로드 중");
@@ -116,6 +99,59 @@ public class MemberServiceImpl implements MemberService {
         }
     }
 
+    @Override
+    @Transactional
+    public void deleteMember(DeleteMemberRequestDto deleteMemberRequestDto, String userId) {
+        Member member = memberDao.findMemberByUserId(userId);
+        if(new BCryptPasswordEncoder().matches(deleteMemberRequestDto.getPassword(),member.getPassword())){
+            memberDao.deleteById(member.getId());
+        }else{
+            throw new PasswordNotMatchException();
+        }
+    }
+
+    @Override
+    @Transactional
+    public void memberLogout(String username) {
+        refreshTokenRepository.findById(username);
+    }
+
+    @Override
+    @Transactional
+    public UpdateMemberResponseDto updateMember(String memberId, UpdateMemberRequestDto updateMemberRequestDto, MultipartFile multipartFile) throws IOException, FileUploadException {
+
+        // 유효성 검증
+        Member member = memberDao.findMemberByUserId(memberId);
+        //비밀번호가 맞아야지만 회원정보수정
+        if(new BCryptPasswordEncoder().matches(updateMemberRequestDto.getPassword(),member.getPassword())){
+            String filename=member.getProfile();
+            filename = deleteOriginFileThenNewFileUpload(memberId, updateMemberRequestDto, member, filename,multipartFile);
+            member.updateMember(updateMemberRequestDto,filename);
+        }else{
+            throw new PasswordNotMatchException();
+        }
+
+        return UpdateMemberResponseDto.builder()
+                .member(member)
+                .build();
+
+    }
+
+    private String deleteOriginFileThenNewFileUpload(String memberId, UpdateMemberRequestDto updateMemberRequestDto, Member member, String filename,MultipartFile multipartFile) throws FileUploadException {
+        if(updateMemberRequestDto.getProfileFile()!=null){
+            if(!filename.equals("flowbit-default-profile.png")){
+                awsS3Service.deleteFile(member.getProfile());
+            }
+            // aws 새롭게 업로드
+            try {
+                filename = awsS3Service.upload(multipartFile.getOriginalFilename(), multipartFile, memberId);
+            }catch (IOException e) {
+                throw new FileUploadException("파일 업로드에 실패하였습니다");
+            }
+        }
+        return filename;
+    }
+
     private void emailVerifyCheck(SignUpRequestDto signUpRequestDto) {
         log.info("회원가입 이메일 검증 중");
 
@@ -128,6 +164,32 @@ public class MemberServiceImpl implements MemberService {
         if(!Objects.equals(redisVerifyPurpose, "signupVerifySuccess")){
             throw new EmailNotValidException();
         }
+    }
+
+    public Member findMemberByUserId(String userId) {
+        return memberDao.findMemberByUserId(userId);
+    }
+
+
+    public MemberInfoResponseDto getMemberInfo(String userId) {
+        Member member = memberDao.findMemberByUserId(userId);
+        return MemberInfoResponseDto.builder()
+                .id(member.getId())
+                .email(member.getUserId())
+                .phone(member.getPhone())
+                .name(member.getName())
+                .nickname(member.getNickname())
+                .profile(member.getProfile())
+                .build();
+    }
+
+
+
+    private boolean passwordValidationCheck(String userPassword, Member member) {
+        if(bCryptPasswordEncoder.matches(userPassword, member.getPassword())){
+            return true;
+        }
+        return false;
     }
 
 
@@ -148,11 +210,9 @@ public class MemberServiceImpl implements MemberService {
     private void signupVaidate(SignUpRequestDto signUpRequestDto){
 
         String userId = signUpRequestDto.getUserId();
-        System.out.println("회원 유효성검증");
         if (memberDao.duplicateMemberCheck(userId).isPresent()) {
             throw new DuplicateAccountException("아이디 중복");
         }
     }
-
 
 }
