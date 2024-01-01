@@ -9,17 +9,20 @@ import com.example.userservice.domain.board.service.BoardService;
 import com.example.userservice.domain.member.entity.Member;
 import com.example.userservice.domain.member.service.MemberService;
 import com.example.userservice.util.ControllerTestSupport;
+import com.example.userservice.util.ImageUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MvcResult;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
+
 import static org.apache.commons.fileupload.FileUploadBase.MULTIPART_FORM_DATA;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -64,7 +67,7 @@ class BoardControllerTest extends ControllerTestSupport {
     }
 
 
-    @DisplayName("로그인을 한 유저는 커뮤니티에 게시글을 작성할 수 있다.")
+    @DisplayName("로그인을 한 유저는 커뮤니티에 게시글을 이미지 없이 작성할 수 있다.")
     @WithMockUser(username = "testUser")
     @Test
     void creaetBoard() throws Exception {
@@ -80,6 +83,34 @@ class BoardControllerTest extends ControllerTestSupport {
                         .param("content", "내용입니다"))
                 .andDo(print())
                 .andExpect(status().isCreated());
+
+    }
+    @DisplayName("로그인을 한 유저는 커뮤니티에 게시글을 이미지와 함께 작성할 수 있다.")
+    @WithMockUser(username = "testUser")
+    @Test
+    void creaetBoardWithImageFile() throws Exception {
+
+        //given
+
+        List<MockMultipartFile> multiFiles = List.of(
+                ImageUtil.generateMockImageFile("subFiles"),
+                ImageUtil.generateMockImageFile("subFiles")
+        );
+
+
+        String url = "/api/v1/board";
+        //when //then
+        MvcResult mvcResult = mockMvc.perform(
+                        multipart(url)
+                                .file(multiFiles.get(0))
+                                .file(multiFiles.get(1))
+                                .param("title","제목입니다")
+                                .param("content","내용입니다")
+                                .contentType(MediaType.MULTIPART_FORM_DATA)
+                )
+                .andDo(print())
+                .andExpect(status().isCreated())
+                .andReturn();
 
     }
 
