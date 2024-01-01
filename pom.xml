@@ -251,7 +251,25 @@
                         <goals>
                             <goal>report</goal>
                         </goals>
+
+                        <configuration>
+                            <excludes>
+                                <!-- Add exclusion patterns here -->
+                                <exclude>**/*Application*</exclude>
+                                <exclude>**/*Config*</exclude>
+                                <exclude>**/*exception*</exclude>
+                                <exclude>**/*request*</exclude>
+                                <exclude>**/*response*</exclude>
+                                <exclude>**/*dto*</exclude>
+                                <exclude>**/*common*</exclude>
+                                <exclude>**/*filter*</exclude>
+                                <exclude>**/*config*</exclude>
+                            </excludes>
+
+                        </configuration>
                     </execution>
+
+
                 </executions>
             </plugin>
 
