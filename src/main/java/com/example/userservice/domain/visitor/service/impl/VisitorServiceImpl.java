@@ -24,24 +24,25 @@ public class VisitorServiceImpl implements VisitorService {
 
     @Override
     @Transactional
-    public void increaseHomeViewCount(String ipAddress) {
+    public Long increaseHomeViewCount(String ipAddress) {
         LocalDateTime currentDate = getCurrentDate();
         int year = currentDate.getYear();
         int month = currentDate.getMonthValue();
         int day = currentDate.getDayOfMonth();
-
         if(!viewCountUtil.isDuplicatedAccess(ipAddress, "Ip_Deadline")) { // 중복된 값이 있는지 확인
-        viewCountUtil.increaseData("ViewCount_Home_Total"); // 해당 키에 data값 1씩 증가
-        viewCountUtil.increaseData("ViewCount_Home"+year+month+day); // 해당 키에 data값 1씩 증가
-        viewCountUtil.setDuplicateAccess(ipAddress, "Ip_Deadline"); //1일 동안 해당 아이피 유지
-        Long totalViewCount = viewCountUtil.getViewCount("ViewCount_Home_Total");
-        Visitor visitor = Visitor.builder()
-                .count(totalViewCount)
-                .visitorIp(ipAddress)
-                .visitDate(currentDate)
-                .build();
-        visitorRepository.save(visitor);
+            viewCountUtil.increaseData("ViewCount_Home_Total"); // 해당 키에 data값 1씩 증가
+            viewCountUtil.increaseData("ViewCount_Home"+year+month+day); // 해당 키에 data값 1씩 증가
+            viewCountUtil.setDuplicateAccess(ipAddress, "Ip_Deadline"); //1일 동안 해당 아이피 유지
+            Long totalViewCount = viewCountUtil.getViewCount("ViewCount_Home_Total");
+            Visitor visitor = Visitor.builder()
+                    .count(totalViewCount)
+                    .visitorIp(ipAddress)
+                    .visitDate(currentDate)
+                    .build();
+            visitorRepository.save(visitor);
         }
+        Long viewCount = viewCountUtil.getViewCount("ViewCount_Home"+year+month+day);
+        return viewCount;
     }
 
     @Override
@@ -50,6 +51,7 @@ public class VisitorServiceImpl implements VisitorService {
         int year = currentDate.getYear();
         int month = currentDate.getMonthValue();
         int day = currentDate.getDayOfMonth();
+        System.out.println("ViewCount_Home"+year+month+day);
 
         Long viewCount = viewCountUtil.getViewCount("ViewCount_Home"+year+month+day);
         return viewCount;

@@ -4,6 +4,8 @@ import com.example.userservice.util.ControllerTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDateTime;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -28,7 +30,8 @@ class VisitorTest extends ControllerTestSupport {
     @Test
     void plusViewCount() throws Exception {
         //given
-        Visitor home = new Visitor(0);
+        LocalDateTime currentDate = LocalDateTime.now();
+        Visitor home = new Visitor(currentDate,0,"127.0.0.1");
 
         //when
         home.plus(10);

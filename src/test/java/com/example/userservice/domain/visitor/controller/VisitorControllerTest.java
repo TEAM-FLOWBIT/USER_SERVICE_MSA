@@ -18,6 +18,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 
+import java.time.LocalDateTime;
+
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -37,37 +39,31 @@ class VisitorControllerTest extends ControllerTestSupport {
 
     @AfterEach
     void tearDown() {
-        int year = VisitorLocalDateTime.YEAR;
-        int month = VisitorLocalDateTime.MONTH;
-        int day = VisitorLocalDateTime.DAY;
-
-
         visitorRepository.deleteAllInBatch();
-        visitorRedisUtil.deleteData("viewCount_Home_1"+year+month+day);
-        visitorRedisUtil.deleteData("ViewCount_Home_Total");
-
+        visitorRedisUtil.initialize();
     }
 
     @DisplayName("메인 페이지에 접속하면 redis에서 조회수가 1회 증가한다.")
     @Test
     void increaseViewCount() throws Exception {
         //given
+        int year = VisitorLocalDateTime.getYear();
+        int month = VisitorLocalDateTime.getMonth();
+        int day = VisitorLocalDateTime.getDay();
 
+        //given
+        String mockIp = "123.123.123.123";
 
-        int year = VisitorLocalDateTime.YEAR;
-        int month = VisitorLocalDateTime.MONTH;
-        int day = VisitorLocalDateTime.DAY;
-
-        String mockIp = "192.168.123.123";
         //when
         mockMvc.perform(post("/api/v1/visitor")
                         .header("X-FORWARDED-FOR", mockIp)
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk());
-
         //then
-        assertThat(viewCountUtil.getViewCount("viewCount_Home_1"+year+month+day)).isEqualTo(1);
+        assertThat(viewCountUtil.getViewCount("ViewCount_Home"+year+month+day)).isEqualTo(1);
+
+
     }
 
     @DisplayName("메인페이지에 접속하면 일일방문자 수를 조회할 수 있다.")
@@ -76,11 +72,11 @@ class VisitorControllerTest extends ControllerTestSupport {
         //given
         String mockIp = "192.168.123.123";
 
-        int year = VisitorLocalDateTime.YEAR;
-        int month = VisitorLocalDateTime.MONTH;
-        int day = VisitorLocalDateTime.DAY;
+        int year = VisitorLocalDateTime.getYear();
+        int month = VisitorLocalDateTime.getMonth();
+        int day = VisitorLocalDateTime.getDay();
 
-        visitorRedisUtil.increaseData("viewCount_Home_1"+year+month+day);
+        visitorRedisUtil.increaseData("ViewCount_Home"+year+month+day);
 
         //when
         MvcResult mvcResult = mockMvc.perform(get("/api/v1/visitor")
@@ -90,13 +86,10 @@ class VisitorControllerTest extends ControllerTestSupport {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        String result = mvcResult.getResponse().getContentAsString();
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode jsonNode = objectMapper.readTree(result);
-        int dataValue = jsonNode.get("data").asInt();
+        Long toDayVisitor = viewCountUtil.getViewCount("ViewCount_Home" + year + month + day);
 
         //then
-        assertThat(viewCountUtil.getViewCount("viewCount_Home_1"+year+month+day)).isEqualTo(dataValue);
+        assertThat(viewCountUtil.getViewCount("ViewCount_Home"+year+month+day)).isEqualTo(toDayVisitor);
     }
 
     @DisplayName("메인페이지에 접속하면 총방문자 수를 조회할 수 있다.")

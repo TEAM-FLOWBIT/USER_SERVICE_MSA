@@ -28,9 +28,9 @@ public class VisitorController {
     public ResponseEntity<?> increaseVisitor(HttpServletRequest request) {
         log.info("방문자 수 post");
         String clientIpAddr = IpHelper.getClientIpAddr(request);
-        visitorService.increaseHomeViewCount(clientIpAddr);
+        Long result = visitorService.increaseHomeViewCount(clientIpAddr);
         return new ResponseEntity<>(
-                new CommonResDto<>(1,"방문자 카운트 증가",""), HttpStatus.OK
+                new CommonResDto<>(1,"방문자 카운트 증가",result), HttpStatus.OK
         );
     }
 
