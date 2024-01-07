@@ -39,8 +39,15 @@ class VisitorControllerTest extends ControllerTestSupport {
 
     @AfterEach
     void tearDown() {
+        int year = VisitorLocalDateTime.getYear();
+        int month = VisitorLocalDateTime.getMonth();
+        int day = VisitorLocalDateTime.getDay();
+
         visitorRepository.deleteAllInBatch();
-        visitorRedisUtil.initialize();
+        visitorRedisUtil.deleteData("ViewCount_Home"+year+month+day);
+        visitorRedisUtil.deleteData("127.0.0.1_Ip_Deadline");
+        visitorRedisUtil.deleteData("ViewCount_Home_Total");
+
     }
 
     @DisplayName("메인 페이지에 접속하면 redis에서 조회수가 1회 증가한다.")

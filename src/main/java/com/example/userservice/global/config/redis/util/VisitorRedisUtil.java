@@ -15,15 +15,6 @@ import java.util.concurrent.TimeUnit;
 public class VisitorRedisUtil {
 
     private final StringRedisTemplate redisTemplate;
-
-
-    @PostConstruct
-    public void initialize() {
-        Set<String> keys = redisTemplate.keys("*");
-        if (keys != null && !keys.isEmpty()) {
-            redisTemplate.delete(keys);
-        }
-    }
     public void setData(String key, Object value, Long time, TimeUnit timeUnit) {
         redisTemplate.opsForValue().set(key, value.toString(), time, timeUnit);
     }
