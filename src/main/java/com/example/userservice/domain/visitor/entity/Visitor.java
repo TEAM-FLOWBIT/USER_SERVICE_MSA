@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -17,12 +18,17 @@ public class Visitor {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    private LocalDateTime visitDate;
+
     private long count;
 
+    private String visitorIp;
 
     @Builder
-    public Visitor(long count) {
+    public Visitor(LocalDateTime visitDate, long count, String visitorIp) {
+        this.visitDate = visitDate;
         this.count = count;
+        this.visitorIp = visitorIp;
     }
 
     public void plus(long viewCount) {

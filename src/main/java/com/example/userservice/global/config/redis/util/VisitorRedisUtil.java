@@ -15,8 +15,6 @@ import java.util.concurrent.TimeUnit;
 public class VisitorRedisUtil {
 
     private final StringRedisTemplate redisTemplate;
-
-
     public void setData(String key, Object value, Long time, TimeUnit timeUnit) {
         redisTemplate.opsForValue().set(key, value.toString(), time, timeUnit);
     }
