@@ -1,11 +1,10 @@
-# 개발용 yml
 spring:
+  profiles:
+    active: dev
   cloud:
     config:
       uri: http://localhost:8888
       name: user-service # yml 파일명 써주면 된다.
-  profiles:
-    active: dev
   thymeleaf:
     prefix: classpath:/templates/
     suffix: .html
@@ -14,14 +13,16 @@ spring:
     check-template: true
     cache: false
 
-## 배포할 떄 해당하는 bootstrap.yml 옵션을 오픈시킨다.
+
+#---
+#
 #spring:
+#  profiles:
+#    active: prod
 #  cloud:
 #    config:
 #      uri: http://flowbit-config:8888
 #      name: user-service # yml 파일명 써주면 된다.
-#  profiles:
-#    active: prod
 #  thymeleaf:
 #    prefix: classpath:/templates/
 #    suffix: .html
@@ -29,7 +30,4 @@ spring:
 #    encoding: UTF-8
 #    check-template: true
 #    cache: false
-<<<<<<< Updated upstream
-=======
 
->>>>>>> Stashed changes

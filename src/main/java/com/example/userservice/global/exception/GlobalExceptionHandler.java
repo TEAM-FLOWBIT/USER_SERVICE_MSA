@@ -27,6 +27,8 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(DuplicateAccountException.class)
     protected ResponseEntity<?> handleDuplicateAccountException(DuplicateAccountException ex) {
+        log.error("handleDuplicateAccountException :: ");
+
         ErrorCode errorCode = ErrorCode.DUPLICATE_ACCOUNT_EXCEPTION;
 
         ErrorResponse error = ErrorResponse.builder()
@@ -48,6 +50,8 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(BoardNotFoundException.class)
     protected ResponseEntity<?> handleBoardNotFoundException(BoardNotFoundException ex) {
+        log.error("handleBoardNotFoundException :: ");
+
         ErrorCode errorCode = ErrorCode.BOARD_NOT_FOUND_EXCEPTION;
 
         ErrorResponse error = ErrorResponse.builder()
@@ -69,6 +73,8 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(BoardCommentNotFoundException.class)
     protected ResponseEntity<?> handleBoardCommentNotFoundException(BoardCommentNotFoundException ex) {
+        log.error("BoardCommentNotFoundException :: ");
+
         ErrorCode errorCode = ErrorCode.BOARDCOMMNET_NOT_FOUND_EXCEPTION;
 
         ErrorResponse error = ErrorResponse.builder()
@@ -87,6 +93,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UnAuthorizedException.class)
     protected ResponseEntity<?> handleUnAuthorizedException(UnAuthorizedException ex) {
+        log.error("handleUnAuthorizedException :: ");
         ErrorCode errorCode = ErrorCode.UnAuthorizedException;
 
         ErrorResponse error = ErrorResponse.builder()
@@ -104,32 +111,13 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * 계정 주요 정보의 암호화 과정이 실패 했을때
-     */
-//    @ExceptionHandler(EncryptException.class)
-//    protected ResponseEntity<CommonResponse> handleEncryptException(EncryptException ex) {
-//        ErrorCode errorCode = ErrorCode.ENCRYPT_FAILED_EXCEPTION;
-//
-//        ErrorResponse error = ErrorResponse.builder()
-//                .status(errorCode.getStatus().value())
-//                .message(errorCode.getMessage())
-//                .code(errorCode.getCode())
-//                .build();
-//
-//        CommonResponse response = CommonResponse.builder()
-//                .success(false)
-//                .error(error)
-//                .build();
-//
-//        return new ResponseEntity<>(response, errorCode.getStatus());
-//    }
-
-    /**
      *
      * 이메일 유효시간이 지났을 경우
      */
     @ExceptionHandler(EmailNotValidException.class)
     protected ResponseEntity<CommonResponse> emailValidationException(EmailNotValidException ex) {
+        log.error("emailValidationException :: ");
+
         ErrorCode errorCode = ErrorCode.EMAIL_VALID_EXCEPTION;
 
         ErrorResponse error = ErrorResponse.builder()
@@ -151,6 +139,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(BindException.class)
     protected ResponseEntity<CommonResponse> handleRequestParameterBindException(BindException ex) {
+        log.error("handleRequestParameterBindException :: ");
 
         ErrorCode errorCode = ErrorCode.REQUEST_PARAMETER_BIND_EXCEPTION;
 
@@ -173,6 +162,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(AuthenticationException.class)
     protected ResponseEntity<CommonResponse> handleAuthenticationException() {
+        log.error("AuthenticationException :: ");
         ErrorCode errorCode = ErrorCode.AUTHENTICATION_FAILED_EXCEPTION;
 
         ErrorResponse error = ErrorResponse.builder()
@@ -194,6 +184,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(PasswordNotMatchException.class)
     protected ResponseEntity<CommonResponse> PasswordNotMatchException() {
+        log.error("PasswordNotMatchException :: ");
         ErrorCode errorCode = ErrorCode.PASSWORD_NOT_MATCH;
 
         ErrorResponse error = ErrorResponse.builder()
@@ -218,7 +209,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NotFoundAccountException.class)
     protected ResponseEntity<CommonResponse> handleNotFoundAccountException(NotFoundAccountException ex) {
 
-        log.info("계정을 찾지 못했습니다.");
+        log.error("handleNotFoundAccountException");
         ErrorCode errorCode = ErrorCode.NOT_FOUND_ACCOUNT_EXCEPTION;
         ErrorResponse error = ErrorResponse.builder()
                 .status(errorCode.getStatus().value())
@@ -241,13 +232,13 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     protected ResponseEntity<?> argumentNotValidException(BindingResult bindingResult,MethodArgumentNotValidException ex) {
+        log.error("argumentNotValidException :: ");
         List<FieldError> fieldErrors = bindingResult.getFieldErrors();
         ErrorCode errorCode = ErrorCode.REQUEST_PARAMETER_BIND_EXCEPTION;
 
         List<String> errorMessages = fieldErrors.stream()
                 .map(error -> error.getDefaultMessage())
                 .collect(Collectors.toList());
-
         ErrorResponse error = ErrorResponse.builder()
                 .status(errorCode.getStatus().value())
                 .message(errorMessages.toString())
@@ -269,7 +260,6 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MissingServletRequestPartException.class)
     public ResponseEntity<?> missingServletRequestPartException(MissingServletRequestPartException exception) {
-//        Sentry.captureException(exception);
         log.error("MissingServletRequestPartException = {}", exception);
         return ResponseEntity.badRequest().body("MissingServletRequestPartException");
     }
@@ -279,7 +269,6 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<?> methodArgumentTypeMismatchException(MethodArgumentTypeMismatchException exception) {
-
         log.error("MethodArgumentTypeMismatchException = {}", exception);
         return ResponseEntity.badRequest().body("잘못된 형식의 값입니다.");
     }
