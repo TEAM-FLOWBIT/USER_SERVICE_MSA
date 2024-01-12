@@ -29,3 +29,7 @@ spring:
 #    encoding: UTF-8
 #    check-template: true
 #    cache: false
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
