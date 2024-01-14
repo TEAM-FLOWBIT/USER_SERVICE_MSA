@@ -1,27 +1,9 @@
-spring:
-  profiles:
-    active: dev
-  cloud:
-    config:
-      uri: http://localhost:8888
-      name: user-service # yml 파일명 써주면 된다.
-  thymeleaf:
-    prefix: classpath:/templates/
-    suffix: .html
-    mode: HTML
-    encoding: UTF-8
-    check-template: true
-    cache: false
-
-
-#---
-#
 #spring:
 #  profiles:
-#    active: prod
+#    active: dev
 #  cloud:
 #    config:
-#      uri: http://flowbit-config:8888
+#      uri: http://localhost:8888
 #      name: user-service # yml 파일명 써주면 된다.
 #  thymeleaf:
 #    prefix: classpath:/templates/
@@ -30,4 +12,22 @@ spring:
 #    encoding: UTF-8
 #    check-template: true
 #    cache: false
+
+
+#---
+
+spring:
+  profiles:
+    active: prod
+  cloud:
+    config:
+      uri: http://flowbit-config:8888
+      name: user-service # yml 파일명 써주면 된다.
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+    mode: HTML
+    encoding: UTF-8
+    check-template: true
+    cache: false
 

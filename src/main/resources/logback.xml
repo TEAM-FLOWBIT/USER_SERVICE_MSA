@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <!-- 기본 console appender 정의 -->
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%-5level %d{HH:mm:ss.SSS} [%thread] %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- springProfile로 감싼 새로운 구성 -->
+    <springProfile name="prod">
+        <!-- prod profile에서 사용할 stash appender 정의 -->
+        <appender name="stash" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+            <destination>flowbit-logstash:5000</destination>
+            <!-- encoder is required -->
+            <encoder class="net.logstash.logback.encoder.LogstashEncoder" />
+        </appender>
+
+        <!-- prod profile에서 사용할 root 설정 -->
+        <root level="ERROR">
+            <!-- console appender 참조 -->
+            <appender-ref ref="console"/>
+            <!-- stash appender 참조 -->
+            <appender-ref ref="stash"/>
+        </root>
+    </springProfile>
+
+    <!-- default profile에서 사용할 root 설정 -->
+    <springProfile name="dev">
+        <root level="INFO">
+            <!-- console appender 참조 -->
+            <appender-ref ref="console"/>
+        </root>
+    </springProfile>
+
+</configuration>
