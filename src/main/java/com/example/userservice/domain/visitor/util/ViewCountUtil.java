@@ -5,7 +5,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.time.*;
+import java.time.temporal.ChronoUnit;
 import java.util.Set;
+import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
 @RequiredArgsConstructor
@@ -20,7 +23,16 @@ public class ViewCountUtil {
     }
 
     public void setDuplicateAccess(String ipAddress, String domainName){
-        visitorRedisUtil.setData(ipAddress + "_" + domainName, 1L, 1L, TimeUnit.DAYS);
+        long expireTime = calculateExpirationTime();
+        visitorRedisUtil.setData(ipAddress + "_" + domainName, 1L, expireTime, TimeUnit.MILLISECONDS);
+    }
+
+    private long calculateExpirationTime() {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime endOfDay = LocalDateTime.of(now.toLocalDate(), LocalTime.MAX);
+
+        long remainingMilliseconds = now.until(endOfDay, ChronoUnit.MILLIS);
+        return remainingMilliseconds;
     }
 
     public Long getViewCount(String key) {
