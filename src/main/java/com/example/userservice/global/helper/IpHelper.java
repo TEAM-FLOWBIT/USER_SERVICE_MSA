@@ -14,11 +14,6 @@ public class IpHelper {
 
         String clientIpAddr = request.getHeader("X-FORWARDED-FOR");
 
-        if (clientIpAddr != null && !clientIpAddr.isEmpty()) {
-            String[] ipAddresses = clientIpAddr.split(",");
-            clientIpAddr = ipAddresses[0].trim();
-        }
-
         Enumeration<String> headerNames = request.getHeaderNames();
 
         if (headerNames != null) {
