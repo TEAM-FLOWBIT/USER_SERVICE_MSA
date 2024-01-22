@@ -45,7 +45,7 @@ class VisitorControllerTest extends ControllerTestSupport {
 
         visitorRepository.deleteAllInBatch();
         visitorRedisUtil.deleteData("ViewCount_Home"+year+month+day);
-        visitorRedisUtil.deleteData("127.0.0.1_Ip_Deadline");
+        visitorRedisUtil.deleteData("123.123.123.123_Ip_Deadline");
         visitorRedisUtil.deleteData("ViewCount_Home_Total");
 
     }

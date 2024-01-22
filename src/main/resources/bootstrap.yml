@@ -1,28 +1,10 @@
-#spring:
-#  profiles:
-#    active: dev
-#  cloud:
-#    config:
-#      uri: http://localhost:8888
-#      name: user-service # yml 파일명 써주면 된다.
-#  thymeleaf:
-#    prefix: classpath:/templates/
-#    suffix: .html
-#    mode: HTML
-#    encoding: UTF-8
-#    check-template: true
-#    cache: false
-
-
-#---
-
 spring:
-  profiles:
-    active: prod
   cloud:
     config:
-      uri: http://flowbit-config:8888
+      uri: ${CONFIG_SERVER_URL:http://localhost:8888/}
       name: user-service # yml 파일명 써주면 된다.
+  profiles:
+    active: ${SPRING_PROFILE:dev}
   thymeleaf:
     prefix: classpath:/templates/
     suffix: .html
