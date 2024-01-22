@@ -9,7 +9,7 @@ pipeline {
         TIME_ZONE = 'Asia/Seoul'
 
         //github
-        TARGET_BRANCH = 'main'
+        TARGET_BRANCH = 'develop'
         REPOSITORY_URL= 'https://github.com/TEAM-FLOWBIT/USER_SERVICE_MSA.git'
 
         //docker-hub
@@ -43,7 +43,7 @@ pipeline {
         stage('Prepare') {
             steps {
                 echo 'Cloning Repository'
-                git branch: 'main',
+                git branch: 'develop',
                     url: 'https://github.com/TEAM-FLOWBIT/USER_SERVICE_MSA.git'
             }
             post {
