@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 #spring:
 #  profiles:
 #    active: dev
@@ -23,6 +24,15 @@ spring:
     config:
       uri: http://flowbit-config:8888
       name: user-service # yml 파일명 써주면 된다.
+=======
+spring:
+  cloud:
+    config:
+      uri: ${CONFIG_SERVER_URL:http://localhost:8888/}
+      name: user-service # yml 파일명 써주면 된다.
+  profiles:
+    active: ${SPRING_PROFILE:dev}
+>>>>>>> Stashed changes
   thymeleaf:
     prefix: classpath:/templates/
     suffix: .html
