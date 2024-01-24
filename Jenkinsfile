@@ -59,7 +59,7 @@ pipeline {
       // 일단은 merge 하기전에 테스트통과함으로 테스트없이 빌드
         stage('Build Maven') {
             steps {
-                echo 'Build Gradle'
+                echo 'Build Maven'
 
                 dir('.'){
                     sh '''
