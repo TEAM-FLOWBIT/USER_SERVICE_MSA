@@ -4,6 +4,9 @@ package com.example.userservice.global.security;
 import com.example.userservice.domain.auth.jwt.JwtAuthenticationFilter;
 import com.example.userservice.domain.auth.jwt.JwtAuthorizationFilter;
 import com.example.userservice.domain.auth.jwt.JwtProvider;
+import com.example.userservice.domain.auth.oauth.CustomOAuth2MemberService;
+import com.example.userservice.domain.auth.oauth.OAuth2LoginFailureHandler;
+import com.example.userservice.domain.auth.oauth.OAuth2LoginSuccessHandler;
 import com.example.userservice.domain.auth.service.RefreshTokenService;
 import com.example.userservice.domain.member.service.MemberService;
 import com.example.userservice.global.exception.GlobalExceptionHandlerFilter;
@@ -32,6 +35,9 @@ public class SecurityConfig{
     private final RefreshTokenService refreshTokenService;
     private final AuthenticationConfiguration authenticationConfiguration;
     private final GlobalExceptionHandlerFilter globalExceptionHandlerFilter;
+    private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
+    private final OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
+    private final CustomOAuth2MemberService customOAuth2MemberService;
 
 
 
@@ -56,10 +62,15 @@ public class SecurityConfig{
                 .antMatchers(HttpMethod.GET, "/**").permitAll()
                 .antMatchers(HttpMethod.PUT, "/**").permitAll()
                 .antMatchers(HttpMethod.DELETE, "/**").permitAll()
+                .antMatchers("/static/**").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/v1/member/renew-access-token").permitAll()
-                .anyRequest().authenticated();
+                .anyRequest().authenticated()
+                .and()
+                .oauth2Login()
+                .successHandler(oAuth2LoginSuccessHandler) // 동의하고 계속하기를 눌렀을 때 Handler 설정
+                .failureHandler(oAuth2LoginFailureHandler) // 소셜 로그인 실패 시 핸들러 설정
+                .userInfoEndpoint().userService(customOAuth2MemberService);
         httpSecurity.addFilterAfter(globalExceptionHandlerFilter,LogoutFilter.class);
-
         return httpSecurity.build();
     }
 

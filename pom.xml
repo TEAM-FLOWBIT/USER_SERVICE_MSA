@@ -188,6 +188,13 @@
             <artifactId>micrometer-registry-prometheus</artifactId>
         </dependency>
 
+        <!-- oauth -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-oauth2-client</artifactId>
+        </dependency>
+
+
         <!-- rest docs-->
         <dependency>
             <groupId>org.springframework.restdocs</groupId>
