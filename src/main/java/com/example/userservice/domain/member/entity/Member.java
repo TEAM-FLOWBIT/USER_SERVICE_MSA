@@ -1,5 +1,7 @@
 package com.example.userservice.domain.member.entity;
 
+import com.example.userservice.domain.auth.MemberRole;
+import com.example.userservice.domain.auth.ProviderType;
 import com.example.userservice.domain.member.dto.request.UpdateMemberRequestDto;
 import com.example.userservice.global.entity.BaseTimeEntity;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -33,15 +35,21 @@ public class Member extends BaseTimeEntity {
         @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
         @Column(nullable = false)
         private String password;
-        @Column(nullable = false)
         private String phone;
         @Column(nullable = false)
         private String nickname;
         private Boolean state;
         @Column(nullable = false)
         private String profile;
+        @Enumerated(EnumType.STRING)
+        private MemberRole memberRole;
+        @Enumerated(EnumType.STRING)
+        private ProviderType providerType;
+
+        private String providerId;
+
         @Builder
-        public Member(Long id, String name, String userId, String password, String phone, String nickname,boolean state,String profile) {
+        public Member(Long id, String name, String userId, String password, String phone, String nickname,boolean state,String profile,ProviderType providerType,String providerId,MemberRole memberRole) {
                 this.id = id;
                 this.name = name;
                 this.userId = userId;
@@ -50,6 +58,9 @@ public class Member extends BaseTimeEntity {
                 this.nickname = nickname;
                 this.state=state;
                 this.profile=profile;
+                this.memberRole = memberRole;
+                this.providerType=providerType;
+                this.providerId=providerId;
         }
 
         public void updateMember(UpdateMemberRequestDto updateMemberRequesstDto, String profileName) {

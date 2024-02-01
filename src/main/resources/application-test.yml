@@ -35,11 +35,15 @@ token:
 cloud:
   aws:
     credentials:
-      accessKey: ${AWS_ACCESS_KEY}
-      secretKey: ${AWS_SECRET_KEY}
+      accessKey: AKIAXJUDK5ZD2WPT2PXC
+      secretKey: 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
     # AWS S3 bucket Info (S3 버킷정보)
     s3.bucket: likelionvideo
     region:
       static: ap-northeast-2
     stack:
       auto: false
+
+
+refer:
+  host: http://localhost:3000/

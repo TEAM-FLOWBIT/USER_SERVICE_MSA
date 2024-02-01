@@ -133,6 +133,12 @@
             <version>2.7.2</version>
         </dependency>
 
+        <!-- oauth -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-oauth2-client</artifactId>
+        </dependency>
+
 
         <!-- Resilience4j -->
         <dependency>
