@@ -35,8 +35,8 @@ token:
 cloud:
   aws:
     credentials:
-      accessKey: AKIAXJUDK5ZD2WPT2PXC
-      secretKey: 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
+      accessKey: ${AWS_ACCESS_KEY}
+      secretKey: ${AWS_SECRET_KEY}
     # AWS S3 bucket Info (S3 버킷정보)
     s3.bucket: likelionvideo
     region:
