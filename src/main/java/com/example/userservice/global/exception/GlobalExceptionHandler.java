@@ -4,6 +4,7 @@ import com.example.userservice.global.exception.dto.CommonResponse;
 import com.example.userservice.global.exception.dto.ErrorResponse;
 import com.example.userservice.global.exception.error.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.BindingResult;
@@ -15,6 +16,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
 
 import java.net.BindException;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -44,6 +46,30 @@ public class GlobalExceptionHandler {
 
         return new ResponseEntity<>(response, errorCode.getStatus());
     }
+
+
+    /**
+     * Handle SQL exceptions
+     */
+    @ExceptionHandler({DataAccessException.class, SQLException.class})
+    protected ResponseEntity<CommonResponse> handleSqlException(Exception ex) {
+        log.error("SQL Exception occurred: {}", ex.getMessage());
+
+        ErrorCode errorCode = ErrorCode.DATABASE_VALIDATION_ERROR;
+        ErrorResponse error = ErrorResponse.builder()
+                .status(errorCode.getStatus().value())
+                .message(ex.getMessage())
+                .code(errorCode.getCode())
+                .build();
+
+        CommonResponse response = CommonResponse.builder()
+                .success(false)
+                .error(error)
+                .build();
+
+        return new ResponseEntity<>(response, errorCode.getStatus());
+    }
+
 
     /**
      * 게시글을 찾지 못했을 때

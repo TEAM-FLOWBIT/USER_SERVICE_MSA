@@ -41,11 +41,10 @@ public class Member extends BaseTimeEntity {
         private Boolean state;
         @Column(nullable = false)
         private String profile;
-        @Enumerated(EnumType.STRING)
-        private MemberRole memberRole;
+        @Builder.Default
+        private MemberRole memberRole = MemberRole.MEMBER;
         @Enumerated(EnumType.STRING)
         private ProviderType providerType;
-
         private String providerId;
 
         @Builder

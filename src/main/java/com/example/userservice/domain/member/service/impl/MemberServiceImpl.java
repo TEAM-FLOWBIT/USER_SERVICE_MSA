@@ -72,7 +72,7 @@ public class MemberServiceImpl implements MemberService {
         signupVaidate(signUpRequestDto);
         // 이메일인증 여부
         emailVerifyCheck(signUpRequestDto);
-        ProfileUploadForcreateMember(multipartFile, signUpRequestDto);
+        profileUploadForcreateMember(multipartFile, signUpRequestDto);
         //회원가입 및 db save
         savedMember = registerMember(signUpRequestDto);
         return new CommonResDto<>(1,"회원가입성공",CreateMemberResponseDto.builder()
@@ -83,7 +83,7 @@ public class MemberServiceImpl implements MemberService {
                 .build());
     }
 
-    public void ProfileUploadForcreateMember(MultipartFile multipartFile, SignUpRequestDto signUpRequestDto) throws FileUploadException {
+    private void profileUploadForcreateMember(MultipartFile multipartFile, SignUpRequestDto signUpRequestDto) throws FileUploadException {
         try {
             if (multipartFile !=null) {
                 log.info("파일업로드 중");
