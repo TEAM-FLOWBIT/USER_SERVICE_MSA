@@ -41,14 +41,15 @@ public class Member extends BaseTimeEntity {
         private Boolean state;
         @Column(nullable = false)
         private String profile;
-        @Builder.Default
-        private MemberRole memberRole = MemberRole.MEMBER;
+        @Enumerated(EnumType.STRING)
+        private MemberRole memberRole;
         @Enumerated(EnumType.STRING)
         private ProviderType providerType;
+
         private String providerId;
 
         @Builder
-        public Member(Long id, String name, String userId, String password, String phone, String nickname,boolean state,String profile,ProviderType providerType,String providerId,MemberRole memberRole) {
+        public Member(Long id, String name, String userId, String password, String phone, String nickname,boolean state,String profile,ProviderType providerType,String providerId) {
                 this.id = id;
                 this.name = name;
                 this.userId = userId;
@@ -57,7 +58,7 @@ public class Member extends BaseTimeEntity {
                 this.nickname = nickname;
                 this.state=state;
                 this.profile=profile;
-                this.memberRole = memberRole;
+                this.memberRole = MemberRole.MEMBER;
                 this.providerType=providerType;
                 this.providerId=providerId;
         }
