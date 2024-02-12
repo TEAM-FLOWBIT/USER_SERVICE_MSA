@@ -13,7 +13,6 @@ import javax.annotation.PostConstruct;
 import java.util.TimeZone;
 
 @SpringBootApplication
-@EnableEurekaClient
 @EnableFeignClients
 public class UserServiceApplication {
     public static void main(String[] args) {
