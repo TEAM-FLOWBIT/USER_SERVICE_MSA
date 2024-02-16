@@ -1,37 +1,72 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
+    <!-- 이 곳에 추가할 properties를 넣는다. -->
+    <property name="LOGS_ABSOLUTE_PATH" value="/var/log"/> <!-- docker run 시 볼륨 매핑해주기 -->
 
-    <!-- 기본 console appender 정의 -->
-    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-            <pattern>%-5level %d{HH:mm:ss.SSS} [%thread] %logger{36} - %msg%n</pattern>
-        </encoder>
+    <!-- appender(어디에 출력할 지)에서 콘솔에 출력되는 형식을 지정한다. -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>[%d{yyyy-MM-dd HH:mm:ss}:%-3relative][%thread] %-5level %logger{36} - %msg%n</Pattern>
+        </layout>
     </appender>
 
-    <!-- springProfile로 감싼 새로운 구성 -->
-    <springProfile name="prod">
-        <!-- prod profile에서 사용할 stash appender 정의 -->
-        <appender name="stash" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
-            <destination>flowbit-logstash:5000</destination>
-            <!-- encoder is required -->
-            <encoder class="net.logstash.logback.encoder.LogstashEncoder" />
+    <springProfile name="prod"><!-- profile prod 에서만 동작해서 파일에 기록하도록 -->
+        <!-- Info 레벨의 이름을 가진 로그를 저장할 방식을 지정한다. -->
+        <appender name="INFO_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+
+            <file>${LOGS_ABSOLUTE_PATH}/info.log</file> <!-- 파일을 저장할 경로를 정한다, 도커 사용 시 볼륨매핑 해주어야함 -->
+            <!-- filters 종류 키워드로 확인 -->
+            <filter class="ch.qos.logback.classic.filter.LevelFilter"> <!-- 지정한 레벨과 같은 로그이벤트 필터링 수행 -->
+                <level>INFO</level>
+                <onMatch>ACCEPT</onMatch> <!-- 해당 레벨만 기록한다. -->
+                <onMismatch>DENY</onMismatch> <!-- 지정 레벨과 맞지 않으면 onMisMatch 에 지정에 따라 수행, DENY -> print 하지않음 -->
+            </filter> <!-- 레벨별 필터링이 필요없을 경우 filter class 관련된 부분을 삭제하면 됨-->
+            <encoder>
+                <pattern>[%d{yyyy-MM-dd HH:mm:ss}:%-3relative][%thread] %-5level %logger{35} - %msg%n</pattern> <!-- 해당 패턴 네이밍으로 현재 로그가 기록됨 -->
+            </encoder>
+            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                <fileNamePattern>${LOGS_ABSOLUTE_PATH}/was-logs/info/info.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern> <!-- 해당 패턴 네이밍으로 이전 파일이 기록됨 -->
+                <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                    <maxFileSize>100MB</maxFileSize> <!-- 한 파일의 최대 용량 -->
+                </timeBasedFileNamingAndTriggeringPolicy>
+                <maxHistory>60</maxHistory> <!-- 한 파일의 최대 저장 기한 -->
+                <totalSizeCap>1GB</totalSizeCap> <!-- 전체 로그파일 크기 제한, 1기가 넘으면 오래된거 삭제 -->
+            </rollingPolicy>
         </appender>
-
-        <!-- prod profile에서 사용할 root 설정 -->
-        <root level="ERROR">
-            <!-- console appender 참조 -->
-            <appender-ref ref="console"/>
-            <!-- stash appender 참조 -->
-            <appender-ref ref="stash"/>
-        </root>
     </springProfile>
 
-    <!-- default profile에서 사용할 root 설정 -->
-    <springProfile name="dev">
-        <root level="INFO">
-            <!-- console appender 참조 -->
-            <appender-ref ref="console"/>
-        </root>
+    <springProfile name="prod">
+        <appender name="WARN_OR_MORE_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+
+            <file>${LOGS_ABSOLUTE_PATH}/warn-or-more.log</file>
+            <filter class="ch.qos.logback.classic.filter.ThresholdFilter"> <!-- 지정레벨 이상의 로그만 print 하는 필터 -->
+                <level>WARN</level>
+            </filter>
+            <encoder>
+                <pattern>[%d{yyyy-MM-dd HH:mm:ss}:%-3relative][%thread] %-5level %logger{35} - %msg%n</pattern>
+            </encoder>
+            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                <fileNamePattern>${LOGS_ABSOLUTE_PATH}/was-logs/warn-or-more/warn-or-more.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+                <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                    <maxFileSize>100MB</maxFileSize>
+                </timeBasedFileNamingAndTriggeringPolicy>
+                <maxHistory>60</maxHistory> <!-- 한 파일의 최대 저장 기한 -->
+                <totalSizeCap>1GB</totalSizeCap> <!-- 전체 로그파일 크기 제한, 1기가 넘으면 오래된거 삭제 -->
+            </rollingPolicy>
+        </appender>
     </springProfile>
 
+    <!-- 루트로거 구성, 루트로그의 기본 수준을 INFO로 지정, info 이상만 print -->
+    <root level="INFO">
+        <springProfile name="!prod">
+            <!-- 각 appender는 루트 로거에 추가 -->
+            <appender-ref ref="STDOUT"/>
+        </springProfile>
+        <springProfile name="prod">
+            <!-- 각 appender는 루트 로거에 추가 -->
+            <appender-ref ref="STDOUT"/>
+            <appender-ref ref="WARN_OR_MORE_LOG"/>
+            <appender-ref ref="INFO_LOG"/>
+        </springProfile>
+    </root>
 </configuration>
