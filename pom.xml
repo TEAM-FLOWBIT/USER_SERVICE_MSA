@@ -15,7 +15,7 @@
     <name>user-service</name>
     <description>user-service</description>
     <properties>
-        <java.version>11</java.version>
+         <java.version>11</java.version>
         <spring-cloud.version>2021.0.0</spring-cloud.version>
     </properties>
     <dependencies>
@@ -24,6 +24,13 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
+        <!--Swagger-->
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-ui</artifactId>
+            <version>1.7.0</version>
+        </dependency>
+
 
         <dependency>
             <groupId>org.springframework.boot</groupId>

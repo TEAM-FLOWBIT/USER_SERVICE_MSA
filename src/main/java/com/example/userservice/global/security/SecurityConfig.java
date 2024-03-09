@@ -69,6 +69,7 @@ public class SecurityConfig{
                 .antMatchers(HttpMethod.GET, "/**").permitAll()
                 .antMatchers(HttpMethod.PUT, "/**").permitAll()
                 .antMatchers(HttpMethod.DELETE, "/**").permitAll()
+                .antMatchers("/v3/**", "/swagger-ui/**").permitAll()
                 .antMatchers("/static/**").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/v1/member/renew-access-token").permitAll()
                 .anyRequest().authenticated()

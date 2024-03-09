@@ -20,6 +20,7 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
@@ -115,12 +116,21 @@ public class MemberController {
     }
 
     @GetMapping("/info")
-    public ResponseEntity<?> info(Principal principal) {
+    public ResponseEntity<?> memberInfo(Principal principal) {
         log.info("회원정보조회");
         return new ResponseEntity<>(
                 new CommonResDto<>(1,"회원조회성공",memberService.getMemberInfo(principal.getName())),HttpStatus.OK
         );
     }
+
+    @GetMapping("/info/{memberId}")
+    public ResponseEntity<?> memberInfoBymemberId(@PathVariable Long memberId) {
+        log.info("회원정보조회");
+        return new ResponseEntity<>(
+                new CommonResDto<>(1,"회원조회성공",memberService.getMemberInfoBymemberId(memberId)),HttpStatus.OK
+        );
+    }
+
     @PostMapping("/profile-update")
     public ResponseEntity<?> memberUpdate(@Valid @ModelAttribute UpdateMemberRequestDto updateMemberRequestDto, Principal principal) throws IOException, FileUploadException {
         log.info("회원정보수정");

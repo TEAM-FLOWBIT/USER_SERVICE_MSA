@@ -7,6 +7,7 @@ import com.example.userservice.domain.member.dto.request.DeleteMemberRequestDto;
 import com.example.userservice.domain.member.dto.request.SignUpRequestDto;
 import com.example.userservice.domain.member.dto.request.UpdateMemberRequestDto;
 import com.example.userservice.domain.member.dto.response.CreateMemberResponseDto;
+import com.example.userservice.domain.member.dto.response.MemberInfoByMemberIdResponseDto;
 import com.example.userservice.domain.member.dto.response.MemberInfoResponseDto;
 import com.example.userservice.domain.member.dto.response.UpdateMemberResponseDto;
 import com.example.userservice.domain.member.entity.Member;
@@ -38,6 +39,7 @@ public class MemberServiceImpl implements MemberService {
 
 
     private final MemberDao memberDao;
+    private final MemberRepository memberRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final EmailRedisUtil emailRedisUtil;
     private final RefreshTokenRepository refreshTokenRepository;
@@ -137,9 +139,21 @@ public class MemberServiceImpl implements MemberService {
 
     }
 
+    @Override
+    public MemberInfoByMemberIdResponseDto getMemberInfoBymemberId(Long memberId) {
+        Member member = memberRepository.findById(memberId).orElseThrow(() -> new NotFoundAccountException());
+        return MemberInfoByMemberIdResponseDto.builder()
+                .id(member.getId())
+                .email(member.getUserId())
+                .name(member.getName())
+                .nickname(member.getNickname())
+                .profile(member.getProfile())
+                .build();
+    }
+
     private String deleteOriginFileThenNewFileUpload(String memberId, UpdateMemberRequestDto updateMemberRequestDto, Member member, String filename,MultipartFile multipartFile) throws FileUploadException {
         if(updateMemberRequestDto.getProfileFile()!=null){
-            if(!filename.equals("flowbit-default-profile.png")){
+            if(!filename.equals("리flowbit-default-profile.png")){
                 awsS3Service.deleteFile(member.getProfile());
             }
             // aws 새롭게 업로드

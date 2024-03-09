@@ -4,6 +4,7 @@ import com.example.userservice.domain.member.dto.request.DeleteMemberRequestDto;
 import com.example.userservice.domain.member.dto.request.SignUpRequestDto;
 import com.example.userservice.domain.member.dto.request.UpdateMemberRequestDto;
 import com.example.userservice.domain.member.dto.response.CreateMemberResponseDto;
+import com.example.userservice.domain.member.dto.response.MemberInfoByMemberIdResponseDto;
 import com.example.userservice.domain.member.dto.response.MemberInfoResponseDto;
 import com.example.userservice.domain.member.dto.response.UpdateMemberResponseDto;
 import com.example.userservice.domain.member.entity.Member;
@@ -26,4 +27,5 @@ public interface MemberService {
 
     UpdateMemberResponseDto updateMember(String memberId, UpdateMemberRequestDto updateMemberRequestDto, MultipartFile multipartFile) throws IOException, FileUploadException;
 
+    MemberInfoByMemberIdResponseDto getMemberInfoBymemberId(Long memberId);
 }
