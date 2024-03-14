@@ -14,6 +14,7 @@ import com.example.userservice.global.common.CommonResDto;
 import com.example.userservice.global.exception.error.InvalidTokenException;
 import com.example.userservice.global.exception.error.NotFoundAccountException;
 import io.micrometer.core.annotation.Timed;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.fileupload.FileUploadException;
@@ -43,6 +44,9 @@ public class MemberController {
     private final JwtProvider jwtProvider;
     private final RefreshTokenService refreshTokenService;
 
+    @Operation(
+            description = "회원생성하는 API"
+    )
     @PostMapping("")
     public ResponseEntity<CommonResDto<CreateMemberResponseDto>> createMember(
 
@@ -52,6 +56,9 @@ public class MemberController {
         return ResponseEntity.status(HttpStatus.CREATED).body(memberService.createMember(signUpRequestDto.getProfileFile(),signUpRequestDto));
     }
 
+    @Operation(
+            description = "refreshToken재생성하는 API"
+    )
     @GetMapping("/renew-access-token")
     public ResponseEntity renewAccessTokenForGetMapping(
             HttpServletResponse response,
@@ -75,6 +82,10 @@ public class MemberController {
             throw new InvalidTokenException("토큰이 유효하지 않습니다");
         }
     }
+
+    @Operation(
+            description = "refreshToken재생성하는 API"
+    )
     @PostMapping("/renew-access-token")
     public ResponseEntity renewAccessTokenForPostMapping(
             HttpServletResponse response,
@@ -99,6 +110,9 @@ public class MemberController {
         }
     }
 
+    @Operation(
+            description = "logout 시 쿠키를 삭제해주는 API"
+    )
     @PostMapping(value = "/logout")
     public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response) throws Exception {
         String cookieRefreshToken = CookieUtil.getRefreshTokenCookie(request);
@@ -115,6 +129,9 @@ public class MemberController {
         );
     }
 
+    @Operation(
+            description = "tokenㅇ로 유저의 정보를 가져오는 API"
+    )
     @GetMapping("/info")
     public ResponseEntity<?> memberInfo(Principal principal) {
         log.info("회원정보조회");
@@ -123,6 +140,9 @@ public class MemberController {
         );
     }
 
+    @Operation(
+            description = "memberId의 정보를 가져오는 API"
+    )
     @GetMapping("/info/{memberId}")
     public ResponseEntity<?> memberInfoBymemberId(@PathVariable Long memberId) {
         log.info("회원정보조회");
@@ -131,6 +151,9 @@ public class MemberController {
         );
     }
 
+    @Operation(
+            description = "회원정보를 수정하는 API"
+    )
     @PostMapping("/profile-update")
     public ResponseEntity<?> memberUpdate(@Valid @ModelAttribute UpdateMemberRequestDto updateMemberRequestDto, Principal principal) throws IOException, FileUploadException {
         log.info("회원정보수정");
@@ -144,6 +167,9 @@ public class MemberController {
 
     }
 
+    @Operation(
+            description = "유저를 삭제하는 API"
+    )
     @DeleteMapping("")
     public ResponseEntity<?> deleteMember(@RequestBody DeleteMemberRequestDto deleteMemberRequestDto, Principal principal) {
 
@@ -156,6 +182,9 @@ public class MemberController {
 
 
 
+    @Operation(
+            description = "Health Check하는 API"
+    )
     @GetMapping("/health_check")
     @Timed(value = "users.status", longTask = true)
     public String status() {

@@ -3,6 +3,7 @@ package com.example.userservice.domain.visitor.controller;
 import com.example.userservice.domain.visitor.service.VisitorService;
 import com.example.userservice.global.common.CommonResDto;
 import com.example.userservice.global.helper.IpHelper;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -22,8 +23,9 @@ public class VisitorController {
 
     private final VisitorService visitorService;
 
-    // 원래는 ip로 확인해주는 것이 맞지만 현재 istio 내부에서 계속해서 x forwared 값을 127.0.0.6으로
-    //반환을 해주기 때문에 ip는 중복체크하지않고 호출하면 방문자 수 계속 늘려주는 방식으로 결정한다.
+    @Operation(
+            description = "사용자의 IP 별 방문자수를 카운팅하는 API"
+    )
     @PostMapping(value = "")
     public ResponseEntity<?> increaseVisitor(HttpServletRequest request) {
         log.info("방문자 수 post");
@@ -34,6 +36,9 @@ public class VisitorController {
         );
     }
 
+    @Operation(
+            description = "일일 방문자를 확인하는 API"
+    )
     @GetMapping(value = "")
     public ResponseEntity<?> toDayVisitorCheck() {
         log.info("방문자 수 get");
@@ -42,6 +47,9 @@ public class VisitorController {
                 new CommonResDto<>(1,"일일 방문자 확인하기",viewCount), HttpStatus.OK
         );
     }
+    @Operation(
+            description = "총 방문자 수를 조회하는 API"
+    )
     @GetMapping(value = "/total-view")
     public ResponseEntity<?> totalVisitorCheck() {
         log.info("방문자 수 get");
